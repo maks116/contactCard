@@ -21,7 +21,7 @@ const Gallery = () => {
             setDataAlbums(albums);
             setLoading(false);
         } catch (error) {
-            alertHandler(error, 'Repeaet the request all albums?', setRefreshAlbums, refreshAlbums);
+            alertHandler(error, 'Repeat the request all albums?', setRefreshAlbums, refreshAlbums);
         }
     };
 
