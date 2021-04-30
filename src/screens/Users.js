@@ -1,60 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { getUsers } from '../api/api';
 import { Header } from '../components/Header';
 import { UserCardsList } from '../components/UserCardsList';
 
-const urlUsers = 'https://randomuser.me/api/?results=50';
-
 const Users = () => {
     const [dataUsers, setDataUsers] = useState([]);
-    // const [dataAlbums, setDataAlbums] = useState([]);
-    const [isloading, setLoading] = useState(true);
+    const [isLoading, setLoading] = useState(true);
     const [refreshUsers, setRefreshUsers] = useState(false);
-    // const [refreshAlbums, setRefreshAlbums] = useState(false);
 
     useEffect(() => {
-        getUsers();
+        getUsers(setDataUsers, setLoading, alertHandler);
     }, [refreshUsers]);
 
-    const saveToStorage = async value => {
-        try {
-            await AsyncStorage.setItem('AUTORIZED', value);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const getUsers = async () => {
-        try {
-            const response = await fetch(urlUsers);
-            const users = await response.json();
-            setDataUsers(users.results);
-            setLoading(false);
-        } catch (error) {
-            setLoading(false);
-            alertHandler(error, 'Repeat the request all users?', setRefreshUsers, refreshUsers);
-        }
-    };
-
-    const alertHandler = (error, message, func, param) =>
+    const alertHandler = error =>
         Alert.alert(
             `${error}`,
-            message,
+            'Repeat the request?',
             [
                 {
                     text: 'Cancel',
                     onPress: () => console.log('Cancel'),
                     style: 'cancel',
                 },
-                { text: 'OK', onPress: () => func(!param) },
+                { text: 'OK', onPress: () => setRefreshUsers(!refreshUsers) },
             ],
             { cancelable: false },
         );
-
-    if (isloading) {
+    if (isLoading) {
         return <ActivityIndicator style={styles.indicator} size="large" color="black" />;
     }
 

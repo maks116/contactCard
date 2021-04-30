@@ -7,7 +7,7 @@ export const Header = ({ titleScreen }) => {
     const navigation = useNavigation();
     return (
         <View style={styles.root}>
-            {titleScreen === 'Login' && <ButtonCircle onPress={() => navigation.goBack()} />}
+            {titleScreen !== 'Contacts' && <ButtonCircle onPress={() => navigation.navigate('Users')} />}
             <Text style={[styles.titleText, { color: titleScreen === 'Gallery' ? '#FFFFFF' : '#0A0A0A' }]}>
                 {titleScreen}
             </Text>
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
         fontWeight: 'normal',
     },
     root: {
-        paddingTop: 20,
+        paddingTop: 35,
         marginBottom: 20,
         flexDirection: 'row',
         alignItems: 'center',

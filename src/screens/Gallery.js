@@ -1,62 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native';
+
 import { Header } from '../components/Header';
 import { AlbumCardsList } from '../components/AlbumCardsList';
-
-const urlAlbums = 'https://jsonplaceholder.typicode.com/photos?_limit=30';
+import { getAlbums } from '../api/api';
 
 const Gallery = () => {
     const [dataAlbums, setDataAlbums] = useState([]);
-    const [isloading, setLoading] = useState(true);
+    const [isLoading, setLoading] = useState(true);
     const [refreshAlbums, setRefreshAlbums] = useState(false);
 
     useEffect(() => {
-        getAlbums();
+        getAlbums(setDataAlbums, setLoading, alertHandler);
     }, [refreshAlbums]);
 
-    const getAlbums = async () => {
-        try {
-            const response = await fetch(urlAlbums);
-            const albums = await response.json();
-            setDataAlbums(albums);
-            setLoading(false);
-        } catch (error) {
-            alertHandler(error, 'Repeat the request all albums?', setRefreshAlbums, refreshAlbums);
-        }
-    };
-
-    const alertHandler = (error, message, func, param) =>
+    const alertHandler = error =>
         Alert.alert(
             `${error}`,
-            message,
+            'Repeat the request?',
             [
                 {
                     text: 'Cancel',
                     onPress: () => console.log('Cancel'),
                     style: 'cancel',
                 },
-                { text: 'OK', onPress: () => func(!param) },
+                { text: 'OK', onPress: () => setRefreshAlbums(!refreshAlbums) },
             ],
             { cancelable: false },
         );
-
-    if (isloading) {
+    if (isLoading) {
         return <ActivityIndicator style={styles.indicator} size="large" color="black" />;
     }
-
-    let headerStyle = { fontSize: 42, fontWeight: 'normal', color: '#0A0A0A' };
-    // let rootStyle = { paddingHorizontal: 25, flex: 1, backgroundColor: '#FFFFFF' };
-    // switch (activeScreen) {
-    //     case 2:
-    //         headerStyle = { fontSize: 42, fontWeight: 'normal', color: '#FFFFFF' };
-    //         rootStyle = { paddingHorizontal: 25, flex: 1, backgroundColor: '#0A0A0A' };
-    //         break;
-
-    //     default:
-    //         headerStyle = { fontSize: 42, fontWeight: 'normal', color: '#0A0A0A' };
-    //         rootStyle = { paddingHorizontal: 25, flex: 1, backgroundColor: '#FFFFFF' };
-    //         break;
-    // }
 
     return (
         <View style={styles.rootStyle}>

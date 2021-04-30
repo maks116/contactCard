@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native'
+import { ScrollView, StyleSheet } from 'react-native';
 import { UserCard } from './UserCard';
 
 export const UserCardsList = ({ data }) => (
@@ -14,14 +14,14 @@ export const UserCardsList = ({ data }) => (
             />
         ))}
     </ScrollView>
-)
+);
 
 const styles = StyleSheet.create({
     scrollStyle: {
-        flex: 1
+        flex: 1,
     },
     scrollContainer: {
         alignItems: 'center',
-        justifyContent: 'center'
-    }
-})
+        justifyContent: 'center',
+    },
+});
