@@ -8,8 +8,6 @@ export const TapBar = ({ navigation, state }) => {
     const [isAuthorized, setAuthorized] = useState(false);
     const currentAppState = useAppState();
 
-    console.log('currentAppState', currentAppState);
-
     const clearStorage = async () => {
         try {
             await AsyncStorage.removeItem('AUTHORIZED');
@@ -61,7 +59,7 @@ export const TapBar = ({ navigation, state }) => {
     return (
         <View style={styles.root}>
             {state?.routes.map((item, index) => (
-                <TouchableOpacity style={styles.buttonStyle} onPress={() => handleNavigate(item)}>
+                <TouchableOpacity key={index} style={styles.buttonStyle} onPress={() => handleNavigate(item)}>
                     <Text style={styles.headerText}>{item.name.toUpperCase()}</Text>
                 </TouchableOpacity>
             ))}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native';
 
+import { ModalPhoto } from './ModalPhoto';
 import { Header } from '../components/Header';
 import { AlbumCardsList } from '../components/AlbumCardsList';
 import { getAlbums } from '../api/api';
@@ -10,9 +11,51 @@ const Gallery = () => {
     const [isLoading, setLoading] = useState(true);
     const [refreshAlbums, setRefreshAlbums] = useState(false);
 
+    const [isModalPhotoVisible, setIsModalPhotoVisible] = useState(false);
+    const [photoIndex, setPhotoIndex] = useState(null);
+    const [currentAlbum, setCurrentAlbum] = useState({});
+
+    const [page, setPage] = useState(1);
+    const [updateDataAlbums, setUpdateDataAlbums] = useState([]);
+
+    const swipeLeft = () => {
+        photoIndex + 1 >= updateDataAlbums.length ? Alert.alert("It's a Finishing") : setPhotoIndex(photoIndex + 1);
+    };
+    const swipeRight = () => {
+        photoIndex - 1 < 0 ? Alert.alert("It's a Beginning") : setPhotoIndex(photoIndex - 1);
+    };
+
     useEffect(() => {
-        getAlbums(setDataAlbums, setLoading, alertHandler);
-    }, [refreshAlbums]);
+        getAlbums(setDataAlbums, page, setLoading, alertHandler);
+    }, []);
+
+    const setPageHandler = () => {
+        if (page < 5) {
+            setPage(page + 1);
+        } else {
+            null;
+        }
+    };
+
+    useEffect(() => {
+        if (page === 1) {
+            setUpdateDataAlbums(dataAlbums);
+        } else {
+            setUpdateDataAlbums(updateDataAlbums.concat(dataAlbums));
+        }
+        setUpdateDataAlbums(updateDataAlbums.concat(dataAlbums));
+    }, [dataAlbums, page]);
+
+    useEffect(() => {
+        console.log(photoIndex);
+        if (photoIndex !== null) {
+            const { url } = updateDataAlbums[photoIndex];
+            const albumData = {
+                url: { uri: url },
+            };
+            setCurrentAlbum(albumData);
+        }
+    }, [updateDataAlbums, photoIndex]);
 
     const alertHandler = error =>
         Alert.alert(
@@ -33,10 +76,24 @@ const Gallery = () => {
     }
 
     return (
-        <View style={styles.rootStyle}>
-            <Header titleScreen="Gallery" />
-            <AlbumCardsList data={dataAlbums} />
-        </View>
+        <>
+            <ModalPhoto
+                isModalPhotoVisible={isModalPhotoVisible}
+                setIsModalPhotoVisible={() => setIsModalPhotoVisible(!isModalPhotoVisible)}
+                currentAlbum={currentAlbum}
+                swipeLeft={swipeLeft}
+                swipeRight={swipeRight}
+            />
+            <View style={styles.rootStyle}>
+                <Header titleScreen="Gallery" />
+                <AlbumCardsList
+                    data={updateDataAlbums}
+                    setPhotoIndex={setPhotoIndex}
+                    setIsModalPhotoVisible={() => setIsModalPhotoVisible(!isModalPhotoVisible)}
+                    setPageHandler={setPageHandler}
+                />
+            </View>
+        </>
     );
 };
 

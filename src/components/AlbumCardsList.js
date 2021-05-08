@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, Text, View } from 'react-native';
 import { AlbumCard } from './AlbumCard';
-import { PhotoModal } from './PhotoModal';
 import { SelectAlbumModal } from './SelectAlbumModal';
 
-export const AlbumCardsList = ({ data }) => {
+export const AlbumCardsList = ({ data, setPhotoIndex, setIsModalPhotoVisible, setPageHandler }) => {
     const [modalVisible, setModalVisible] = useState(false);
-    const [modalPhotoVisible, setModalPhotoVisible] = useState(false);
     const [selectedAlbum, setSelectedAlbum] = useState(1);
-    const [selectedPhoto, setSelectedPhoto] = useState('');
-    console.log(':::', selectedPhoto);
 
     return (
         <>
@@ -17,12 +13,6 @@ export const AlbumCardsList = ({ data }) => {
                 modalVisible={modalVisible}
                 setModalVisible={() => setModalVisible(!modalVisible)}
                 setSelectedAlbum={setSelectedAlbum}
-            />
-
-            <PhotoModal
-                modalPhotoVisible={modalPhotoVisible}
-                setModalPhotoVisible={() => setModalPhotoVisible(!modalPhotoVisible)}
-                selectedPhoto={selectedPhoto}
             />
 
             <TouchableOpacity style={styles.selectStyle} onPress={() => setModalVisible(true)}>
@@ -34,19 +24,21 @@ export const AlbumCardsList = ({ data }) => {
 
             <FlatList
                 data={data}
-                renderItem={({ item }) =>
+                renderItem={({ item, index }) =>
                     selectedAlbum === 1 && (
                         <AlbumCard
-                            key={item.id}
+                            // key={item.id}
                             albumName={item.title}
                             albumNumber={item.albumId}
-                            albumPhoto={{ uri: item.url }}
-                            onPressHandler={() => setModalPhotoVisible(true)}
-                            setSelectedPhoto={setSelectedPhoto}
+                            albumPhoto={item.url}
+                            setIsModalPhotoVisible={() => setIsModalPhotoVisible()}
+                            setPhotoIndex={() => setPhotoIndex(index)}
                         />
                     )
                 }
-                keyExtractor={item => item.id}
+                keyExtractor={(item, index) => index}
+                onEndReached={() => setPageHandler()}
+                onEndReachedThreshold={0.1}
             />
         </>
     );
@@ -54,7 +46,7 @@ export const AlbumCardsList = ({ data }) => {
 
 const styles = StyleSheet.create({
     headerText: {
-        fontSize: 25,
+        fontSize: 20,
         fontWeight: 'normal',
         color: '#00ADD3',
         textDecorationLine: 'underline',
@@ -64,7 +56,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         position: 'absolute',
-        marginTop: 30,
+        marginTop: 45,
         right: 0,
     },
     numberContainer: {

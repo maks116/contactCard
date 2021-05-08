@@ -1,8 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import {
+    StyleSheet,
+    View,
+    TextInput,
+    TouchableOpacity,
+    Text,
+    Alert,
+    TouchableWithoutFeedback,
+    Keyboard,
+} from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Animatable from 'react-native-animatable';
+import { useKeyboard, useDimensions } from '@react-native-community/hooks';
 
 import { useNavigation } from '@react-navigation/native';
 import { Header } from '../components/Header';
@@ -13,8 +23,8 @@ const secureObject = {
 };
 
 export const Login = () => {
-    console.log('LOGIN!!!!!');
-
+    const keyboard = useKeyboard();
+    const { height } = useDimensions().window;
     const animateRef = useRef(null);
     const [animationTrigger, setAnimationTrigger] = useState(false);
     const [valueLogin, setValueLogin] = useState('');
@@ -35,40 +45,50 @@ export const Login = () => {
 
     const handleSubmit = () => {
         if (valueLogin.toLowerCase() !== secureObject.login || valuePassword.toLowerCase() !== secureObject.password) {
-            // alertHandler('Please, enter correct credentials')
             setAnimationTrigger(!animationTrigger);
         }
         if (valueLogin.toLowerCase() === secureObject.login && valuePassword.toLowerCase() === secureObject.password) {
             saveToStorage('true');
-            alertHandler('Correct');
+            Alert.alert('Correct');
             setTimeout(() => navigation.navigate('Gallery'), 1000);
         }
         return null;
     };
 
-    const alertHandler = x => Alert.alert(x, { cancelable: false });
-
     return (
         <View style={styles.root}>
-            <Header titleScreen="Login" />
-            <View style={styles.scrollStyle}>
-                <Animatable.View style={{ width: '90%' }} ref={animateRef}>
-                    <TextInput
-                        style={styles.inputStyle}
-                        placeholder="Enter your Login"
-                        value={valueLogin}
-                        onChangeText={setValueLogin}
-                    />
-                    <TextInput
-                        style={styles.inputStyle}
-                        placeholder="Enter your Password"
-                        value={valuePassword}
-                        onChangeText={setValuePassword}
-                    />
-                </Animatable.View>
-                <TouchableOpacity style={styles.buttonStyle} onPress={handleSubmit}>
-                    <Text style={styles.buttonTextStyle}>Submit</Text>
-                </TouchableOpacity>
+            <Header title="Log In" />
+            <View
+                style={[
+                    styles.rootBox,
+                    { height: keyboard.keyboardShown ? height - 150 - keyboard.keyboardHeight : height - 150 },
+                ]}
+            >
+                <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
+                    <View style={[styles.contentBox, { paddingTop: keyboard.keyboardShown ? '50%' : '80%' }]}>
+                        <Animatable.View style={{ width: '90%' }} ref={animateRef}>
+                            <TextInput
+                                style={styles.inputStyle}
+                                placeholder="Enter your Login"
+                                value={valueLogin}
+                                onChangeText={setValueLogin}
+                            />
+                            <TextInput
+                                style={styles.inputStyle}
+                                placeholder="Enter your Password"
+                                value={valuePassword}
+                                onChangeText={setValuePassword}
+                                onEndEditing={() => {
+                                    Keyboard.dismiss();
+                                    handleSubmit();
+                                }}
+                            />
+                        </Animatable.View>
+                        <TouchableOpacity style={styles.buttonStyle} onPress={handleSubmit}>
+                            <Text style={styles.buttonTextStyle}>Submit</Text>
+                        </TouchableOpacity>
+                    </View>
+                </TouchableWithoutFeedback>
             </View>
         </View>
     );
@@ -80,15 +100,15 @@ const styles = StyleSheet.create({
     root: {
         paddingHorizontal: 25,
         flex: 1,
+        justifyContent: 'flex-start',
     },
-    scrollStyle: {
+    rootBox: {},
+    contentBox: {
         flex: 1,
-        paddingTop: 250,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
     },
     inputStyle: {
-        width: '100%',
         height: 55,
         marginBottom: 12,
         borderWidth: 1,
@@ -106,7 +126,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#00ADD3',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: '80%',
     },
     buttonTextStyle: {
         fontSize: 16,

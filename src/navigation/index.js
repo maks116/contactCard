@@ -16,8 +16,8 @@ const Tabs = createBottomTabNavigator();
 
 const SecureScreens = () => (
     <SecureStack.Navigator initialRouteName="Login" headerMode="none">
-        <RootStack.Screen name="Login" component={Login} />
-        <RootStack.Screen name="Gallery" component={Gallery} />
+        <SecureStack.Screen name="Login" component={Login} />
+        <SecureStack.Screen name="Gallery" component={Gallery} />
     </SecureStack.Navigator>
 );
 

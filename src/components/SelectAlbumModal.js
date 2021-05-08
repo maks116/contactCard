@@ -1,17 +1,12 @@
-import React, { useState } from "react";
-import { Modal, StyleSheet, View, Text } from "react-native";
+import React, { useState } from 'react';
+import { Modal, StyleSheet, View, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { PICKERDATA } from '../data'
+import { PICKERDATA } from '../data';
 
 export const SelectAlbumModal = ({ modalVisible, setModalVisible, setSelectedAlbum }) => {
     const [selectedValue, setSelectedValue] = useState(2);
     return (
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={setModalVisible}
-        >
+        <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={setModalVisible}>
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                     <Picker
@@ -22,7 +17,7 @@ export const SelectAlbumModal = ({ modalVisible, setModalVisible, setSelectedAlb
                             setModalVisible(!modalVisible);
                         }}
                     >
-                        {PICKERDATA.map((item) => (
+                        {PICKERDATA.map(item => (
                             <Picker.Item label={item.label} value={item.value} key={item.value.toString()} />
                         ))}
                     </Picker>
@@ -35,16 +30,16 @@ export const SelectAlbumModal = ({ modalVisible, setModalVisible, setSelectedAlb
 const styles = StyleSheet.create({
     centeredView: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
         marginTop: 22,
     },
     modalView: {
         width: '80%',
         height: 'auto',
         margin: 20,
-        backgroundColor: "white",
+        backgroundColor: 'white',
         borderRadius: 20,
         padding: 35,
-    }
+    },
 });
